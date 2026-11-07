@@ -1,6 +1,7 @@
 /*
  * Autonomous mecanum car - bare-metal port for ATmega328PB
- * No Arduino core: avr-libc only.
+ * Microchip Studio 7: GCC C++ Executable Project, device ATmega328PB.
+ * No Arduino core: avr-libc only. Compatible with the default avr-g++ 5.4 (gnu++98).
  *
  * Assumptions
  *   - 16 MHz external crystal (fuses set accordingly)
@@ -8,10 +9,8 @@
  *   - Keyestudio mecanum base board: STC8G1K08 motor controller reached over a
  *     bit-banged I2C bus on D3 (SDA) / D2 (SCL), registers 1..8 = PWM 0..255
  *
- * Build
- *   avr-g++ -mmcu=atmega328pb -DF_CPU=16000000UL -Os -std=gnu++17 -Wall -o car.elf main.cpp
- *   avr-objcopy -O ihex -R .eeprom car.elf car.hex
- *   avrdude -c <programmer> -p m328pb -U flash:w:car.hex:i
+ * Build in Microchip Studio: Build > Build Solution (F7).
+ * Output: <project>/Debug/<project>.hex
  */
 
 #ifndef F_CPU
@@ -267,7 +266,7 @@ static void motor_writeReg(uint8_t reg, uint8_t val) {
 // Forward = first channel 0, second channel PWM.
 // ═════════════════════════════════════════════════════════════════════════════
 
-enum Wheel : uint8_t { FL = 0, FR, BL, BR };
+enum Wheel { FL = 0, FR, BL, BR };
 
 struct WheelCh { uint8_t a, b; };
 static const WheelCh WHEEL_CH[4] = {
@@ -329,10 +328,10 @@ static uint8_t toPwm(int v) { return (uint8_t)clampi(v, 0, 255); }
 
 // ── Sensors ─────────────────────────────────────────────────────────────────
 static void sensors_init() {
-    const Ultrasonic* s[] = { &US_FRONT, &US_LEFT, &US_RIGHT };
-    for (const Ultrasonic* u : s) {
-        pinLow(u->trig); pinOutput(u->trig);
-        pinInput(u->echo);
+    const Ultrasonic* s[3] = { &US_FRONT, &US_LEFT, &US_RIGHT };
+    for (uint8_t i = 0; i < 3; i++) {
+        pinLow(s[i]->trig); pinOutput(s[i]->trig);
+        pinInput(s[i]->echo);
     }
 }
 
