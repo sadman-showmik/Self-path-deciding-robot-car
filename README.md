@@ -134,4 +134,5 @@ All tuning values are `#define`s at the top of `main.cpp`.
 
 ## License
 
-Add a license of your choice (for example MIT).
+MIT License
+Copyright (c) 2026 B M Sadman Showmik
